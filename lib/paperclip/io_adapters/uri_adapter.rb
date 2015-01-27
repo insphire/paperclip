@@ -20,6 +20,12 @@ module Paperclip
     def cache_current_values
       @original_filename = @target.path.split("/").last
       @original_filename ||= "index.html"
+
+      if @content.meta['content-disposition'].present?
+        cd_filename = @content.meta['content-disposition'].match(/filename=(\"?)(.+)\1/)
+        @original_filename = cd_filename[2] if cd_filename && cd_filename.size > 2
+      end
+
       self.original_filename = @original_filename.strip
 
       @content_type = @content.content_type if @content.respond_to?(:content_type)
